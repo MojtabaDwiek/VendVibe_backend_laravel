@@ -12,32 +12,46 @@ class PostController extends Controller
     public function index()
     {
         return response([
-            'posts' => Post::orderBy('created_at', 'desc')->with('user:id,name,image')->withCount('comments', 'likes')
-            ->with('likes', function($like){
-                return $like->where('user_id', auth()->user()->id)
-                    ->select('id', 'user_id', 'post_id')->get();
-            })
-            ->get()
+            'posts' => Post::orderBy('created_at', 'desc')
+                ->with('user:id,name,phone_number,image') // Include phone_number here
+                ->withCount('comments', 'likes')
+                ->with('likes', function($query) {
+                    $query->where('user_id', auth()->user()->id)
+                          ->select('id', 'user_id', 'post_id');
+                })
+                ->get()
         ], 200);
     }
 
     // get single post
     public function show($id)
     {
+        $post = Post::where('id', $id)
+            ->with('user:id,name,phone_number,image') // Include phone_number here
+            ->withCount('comments', 'likes')
+            ->first();
+
+        if (!$post) {
+            return response([
+                'message' => 'Post not found.'
+            ], 404);
+        }
+
         return response([
-            'post' => Post::where('id', $id)->withCount('comments', 'likes')->get()
+            'post' => $post
         ], 200);
     }
 
     // create a post
     public function store(Request $request)
     {
-        //validate fields
+        // validate fields
         $attrs = $request->validate([
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'image' => 'nullable|image' // Optional image validation
         ]);
 
-        $image = $this->saveImage($request->image, 'posts');
+        $image = $this->saveImage($request->file('image'), 'posts');
 
         $post = Post::create([
             'body' => $attrs['body'],
@@ -45,11 +59,9 @@ class PostController extends Controller
             'image' => $image
         ]);
 
-        // for now skip for post image
-
         return response([
             'message' => 'Post created.',
-            'post' => $post,
+            'post' => $post
         ], 200);
     }
 
@@ -58,30 +70,32 @@ class PostController extends Controller
     {
         $post = Post::find($id);
 
-        if(!$post)
-        {
+        if (!$post) {
             return response([
                 'message' => 'Post not found.'
-            ], 403);
+            ], 404);
         }
 
-        if($post->user_id != auth()->user()->id)
-        {
+        if ($post->user_id != auth()->user()->id) {
             return response([
                 'message' => 'Permission denied.'
             ], 403);
         }
 
-        //validate fields
+        // validate fields
         $attrs = $request->validate([
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'image' => 'nullable|image' // Optional image validation
         ]);
 
         $post->update([
-            'body' =>  $attrs['body']
+            'body' => $attrs['body']
         ]);
 
-        // for now skip for post image
+        if ($request->hasFile('image')) {
+            $post->image = $this->saveImage($request->file('image'), 'posts');
+            $post->save();
+        }
 
         return response([
             'message' => 'Post updated.',
@@ -89,20 +103,18 @@ class PostController extends Controller
         ], 200);
     }
 
-    //delete post
+    // delete post
     public function destroy($id)
     {
         $post = Post::find($id);
 
-        if(!$post)
-        {
+        if (!$post) {
             return response([
                 'message' => 'Post not found.'
-            ], 403);
+            ], 404);
         }
 
-        if($post->user_id != auth()->user()->id)
-        {
+        if ($post->user_id != auth()->user()->id) {
             return response([
                 'message' => 'Permission denied.'
             ], 403);
@@ -115,5 +127,15 @@ class PostController extends Controller
         return response([
             'message' => 'Post deleted.'
         ], 200);
+    }
+
+    // Save image method
+    public function saveImage($image, $folder = 'public')
+    {
+        if ($image) {
+            $path = $image->store($folder, 'public');
+            return $path;
+        }
+        return null;
     }
 }

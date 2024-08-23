@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
+use Illuminate\Support\Facades\Storage;
 
 class AuthController extends Controller
 {
-    //Register user
+    // Register user
     public function register(Request $request)
     {
-        //validate fields
+        // Validate fields
         $attrs = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
@@ -19,7 +20,7 @@ class AuthController extends Controller
             'phone_number' => 'required|string|max:8',
         ]);
 
-        //create user
+        // Create user
         $user = User::create([
             'name' => $attrs['name'],
             'email' => $attrs['email'],
@@ -27,38 +28,41 @@ class AuthController extends Controller
             'phone_number' => $attrs['phone_number'],
         ]);
 
-        //return user & token in response
+        // Return user & token in response
         return response([
             'user' => $user,
+            'phone_number' => $user->phone_number,
             'token' => $user->createToken('secret')->plainTextToken
         ], 200);
     }
 
-    // login user
+    // Login user
     public function login(Request $request)
     {
-        //validate fields
+        // Validate fields
         $attrs = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
 
-        // attempt login
-        if(!Auth::attempt($attrs))
-        {
+        // Attempt login
+        if (!Auth::attempt($attrs)) {
             return response([
                 'message' => 'Invalid credentials.'
             ], 403);
         }
 
-        //return user & token in response
+        $user = auth()->user();
+
+        // Return user & token in response
         return response([
-            'user' => auth()->user(),
-            'token' => auth()->user()->createToken('secret')->plainTextToken
+            'user' => $user,
+            'phone_number' => $user->phone_number,
+            'token' => $user->createToken('secret')->plainTextToken
         ], 200);
     }
 
-    // logout user
+    // Logout user
     public function logout()
     {
         auth()->user()->tokens()->delete();
@@ -67,22 +71,27 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // get user details
+    // Get user details
     public function user()
     {
+        $user = auth()->user();
+
         return response([
-            'user' => auth()->user()
+            'user' => $user,
+            'phone_number' => $user->phone_number,
         ], 200);
     }
 
-    // update user
+    // Update user
     public function update(Request $request)
     {
         $attrs = $request->validate([
             'name' => 'required|string'
         ]);
 
-        $image = $this->saveImage($request->image, 'profiles');
+        $image = $request->hasFile('image') 
+            ? $this->saveImage($request->file('image'), 'profiles') 
+            : null;
 
         auth()->user()->update([
             'name' => $attrs['name'],
@@ -91,8 +100,22 @@ class AuthController extends Controller
 
         return response([
             'message' => 'User updated.',
-            'user' => auth()->user()
+            'user' => auth()->user(),
+            'phone_number' => auth()->user()->phone_number
         ], 200);
     }
 
+    // Method to save image with default path value
+    public function saveImage($image, $path = 'public')
+    {
+        // Validate image
+        $this->validate($image, [
+            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
+        ]);
+
+        // Save image
+        $imagePath = $image->store($path, 'public');
+
+        return $imagePath;
+    }
 }
