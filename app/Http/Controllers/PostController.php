@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Post;
 
 class PostController extends Controller
 {
-    // get all posts
+    // Get all posts
     public function index()
     {
         return response([
             'posts' => Post::orderBy('created_at', 'desc')
-                ->with('user:id,name,phone_number,image') // Include phone_number here
+                ->with('user:id,name,phone_number,image')
                 ->withCount('comments', 'likes')
                 ->with('likes', function($query) {
                     $query->where('user_id', auth()->user()->id)
@@ -23,11 +22,11 @@ class PostController extends Controller
         ], 200);
     }
 
-    // get single post
+    // Get single post
     public function show($id)
     {
         $post = Post::where('id', $id)
-            ->with('user:id,name,phone_number,image') // Include phone_number here
+            ->with('user:id,name,phone_number,image')
             ->withCount('comments', 'likes')
             ->first();
 
@@ -42,13 +41,13 @@ class PostController extends Controller
         ], 200);
     }
 
-    // create a post
+    // Create a post
     public function store(Request $request)
     {
-        // validate fields
+        // Validate fields
         $attrs = $request->validate([
             'body' => 'required|string',
-            'image' => 'nullable|image' // Optional image validation
+            'image' => 'nullable|image'
         ]);
 
         $image = $this->saveImage($request->file('image'), 'posts');
@@ -65,7 +64,7 @@ class PostController extends Controller
         ], 200);
     }
 
-    // update a post
+    // Update a post
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
@@ -82,10 +81,10 @@ class PostController extends Controller
             ], 403);
         }
 
-        // validate fields
+        // Validate fields
         $attrs = $request->validate([
             'body' => 'required|string',
-            'image' => 'nullable|image' // Optional image validation
+            'image' => 'nullable|image'
         ]);
 
         $post->update([
@@ -103,7 +102,7 @@ class PostController extends Controller
         ], 200);
     }
 
-    // delete post
+    // Delete a post
     public function destroy($id)
     {
         $post = Post::find($id);
@@ -119,6 +118,61 @@ class PostController extends Controller
                 'message' => 'Permission denied.'
             ], 403);
         }
+
+        $post->comments()->delete();
+        $post->likes()->delete();
+        $post->delete();
+
+        return response([
+            'message' => 'Post deleted.'
+        ], 200);
+    }
+
+    // Get all posts created by the authenticated user
+    public function userPosts()
+    {
+        $user = auth()->user();
+        $posts = Post::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->with('user:id,name,phone_number,image')
+            ->withCount('comments', 'likes')
+            ->get();
+
+        return response([
+            'posts' => $posts
+        ], 200);
+    }
+
+    // Update a post belonging to the authenticated user
+    public function updateUserPost(Request $request, $id)
+    {
+        $post = Post::where('user_id', auth()->user()->id)->findOrFail($id);
+
+        // Validate fields
+        $attrs = $request->validate([
+            'body' => 'required|string',
+            'image' => 'nullable|image'
+        ]);
+
+        $post->update([
+            'body' => $attrs['body']
+        ]);
+
+        if ($request->hasFile('image')) {
+            $post->image = $this->saveImage($request->file('image'), 'posts');
+            $post->save();
+        }
+
+        return response([
+            'message' => 'Post updated.',
+            'post' => $post
+        ], 200);
+    }
+
+    // Delete a post belonging to the authenticated user
+    public function deleteUserPost($id)
+    {
+        $post = Post::where('user_id', auth()->user()->id)->findOrFail($id);
 
         $post->comments()->delete();
         $post->likes()->delete();
