@@ -105,17 +105,5 @@ class AuthController extends Controller
         ], 200);
     }
 
-    // Method to save image with default path value
-    public function saveImage($image, $path = 'public')
-    {
-        // Validate image
-        $this->validate($image, [
-            'image' => 'required|image|mimes:jpg,jpeg,png,gif|max:2048',
-        ]);
-
-        // Save image
-        $imagePath = $image->store($path, 'public');
-
-        return $imagePath;
-    }
+   
 }

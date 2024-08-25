@@ -45,13 +45,12 @@ class PostController extends Controller
     // create a post
     public function store(Request $request)
     {
-        // validate fields
+        //validate fields
         $attrs = $request->validate([
-            'body' => 'required|string',
-            'image' => 'nullable|image' // Optional image validation
+            'body' => 'required|string'
         ]);
 
-        $image = $this->saveImage($request->file('image'), 'posts');
+        $image = $this->saveImage($request->image, 'posts');
 
         $post = Post::create([
             'body' => $attrs['body'],
@@ -59,9 +58,11 @@ class PostController extends Controller
             'image' => $image
         ]);
 
+        // for now skip for post image
+
         return response([
             'message' => 'Post created.',
-            'post' => $post
+            'post' => $post,
         ], 200);
     }
 
@@ -70,32 +71,30 @@ class PostController extends Controller
     {
         $post = Post::find($id);
 
-        if (!$post) {
+        if(!$post)
+        {
             return response([
                 'message' => 'Post not found.'
-            ], 404);
+            ], 403);
         }
 
-        if ($post->user_id != auth()->user()->id) {
+        if($post->user_id != auth()->user()->id)
+        {
             return response([
                 'message' => 'Permission denied.'
             ], 403);
         }
 
-        // validate fields
+        //validate fields
         $attrs = $request->validate([
-            'body' => 'required|string',
-            'image' => 'nullable|image' // Optional image validation
+            'body' => 'required|string'
         ]);
 
         $post->update([
-            'body' => $attrs['body']
+            'body' =>  $attrs['body']
         ]);
 
-        if ($request->hasFile('image')) {
-            $post->image = $this->saveImage($request->file('image'), 'posts');
-            $post->save();
-        }
+        // for now skip for post image
 
         return response([
             'message' => 'Post updated.',
@@ -129,13 +128,5 @@ class PostController extends Controller
         ], 200);
     }
 
-    // Save image method
-    public function saveImage($image, $folder = 'public')
-    {
-        if ($image) {
-            $path = $image->store($folder, 'public');
-            return $path;
-        }
-        return null;
-    }
+    
 }
