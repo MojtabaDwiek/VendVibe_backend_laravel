@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -8,7 +7,7 @@ use App\Models\Post;
 
 class PostController extends Controller
 {
-    // get all posts
+    // Get all posts
     public function index()
     {
         return response([
@@ -23,7 +22,7 @@ class PostController extends Controller
         ], 200);
     }
 
-    // get single post
+    // Get single post
     public function show($id)
     {
         $post = Post::where('id', $id)
@@ -42,23 +41,26 @@ class PostController extends Controller
         ], 200);
     }
 
-    // create a post
+    // Create a post
     public function store(Request $request)
     {
-        //validate fields
+        // Validate fields
         $attrs = $request->validate([
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'images' => 'array', // Accepts an array of images
+            'images.*' => 'string' // Each image URL should be a string
         ]);
 
-        $image = $this->saveImage($request->image, 'posts');
+        // Handle images
+        $images = $request->input('images'); // Assuming images are URLs or base64 strings
 
         $post = Post::create([
             'body' => $attrs['body'],
             'user_id' => auth()->user()->id,
-            'image' => $image
+            'price' => $attrs['price'],
+            'images' => $images
         ]);
-
-        // for now skip for post image
 
         return response([
             'message' => 'Post created.',
@@ -66,35 +68,37 @@ class PostController extends Controller
         ], 200);
     }
 
-    // update a post
+    // Update a post
     public function update(Request $request, $id)
     {
         $post = Post::find($id);
 
-        if(!$post)
-        {
+        if (!$post) {
             return response([
                 'message' => 'Post not found.'
-            ], 403);
+            ], 404);
         }
 
-        if($post->user_id != auth()->user()->id)
-        {
+        if ($post->user_id != auth()->user()->id) {
             return response([
                 'message' => 'Permission denied.'
             ], 403);
         }
 
-        //validate fields
+        // Validate fields
         $attrs = $request->validate([
-            'body' => 'required|string'
+            'body' => 'required|string',
+            'price' => 'nullable|numeric|min:0', // Price is optional during update
+            'images' => 'nullable|array', // Accepts an array of images
+            'images.*' => 'nullable|string' // Each image URL should be a string
         ]);
 
+        // Update post attributes
         $post->update([
-            'body' =>  $attrs['body']
+            'body' => $attrs['body'],
+            'price' => $attrs['price'] ?? $post->price, // Preserve existing price if not provided
+            'images' => $attrs['images'] ?? $post->images // Preserve existing images if not provided
         ]);
-
-        // for now skip for post image
 
         return response([
             'message' => 'Post updated.',
@@ -102,7 +106,7 @@ class PostController extends Controller
         ], 200);
     }
 
-    // delete post
+    // Delete a post
     public function destroy($id)
     {
         $post = Post::find($id);
@@ -127,6 +131,4 @@ class PostController extends Controller
             'message' => 'Post deleted.'
         ], 200);
     }
-
-    
 }

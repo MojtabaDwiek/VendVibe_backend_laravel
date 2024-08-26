@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,7 +14,13 @@ class Post extends Model
     protected $fillable = [
         'body',
         'user_id',
-        'image'
+        'price',      // Add price to fillable
+        'images',     // Change 'image' to 'images'
+    ];
+
+    // Cast 'images' as an array for easy handling
+    protected $casts = [
+        'images' => 'array',
     ];
 
     public function user()

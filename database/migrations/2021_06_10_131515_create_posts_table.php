@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,7 +16,8 @@ class CreatePostsTable extends Migration
             $table->id();
             $table->integer('user_id');
             $table->string('body');
-            $table->string('image')->nullable();
+            $table->decimal('price', 8, 2); // Add price column without after() method
+            $table->json('images')->nullable(); // Add images column without after() method
             $table->timestamps();
         });
     }
