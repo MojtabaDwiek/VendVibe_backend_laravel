@@ -120,6 +120,16 @@ class PostController extends Controller
     ], 200);
 }
 
+public function search(Request $request)
+{
+    $query = $request->input('query');
+    $posts = Post::where('body', 'LIKE', "%{$query}%")
+                 
+                 ->get();
+
+    return response()->json($posts);
+}
+
 
     // Delete a post
     public function destroy($id)
