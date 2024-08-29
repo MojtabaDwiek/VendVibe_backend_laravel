@@ -1,9 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
 use App\Models\Post;
+use App\Models\UserItem; // Import the UserItem model
+use App\Models\Favorite; // Import the Favorite model if you need it
+use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
 {
@@ -67,69 +70,72 @@ class PostController extends Controller
             'images' => $images
         ]);
     
+        // Automatically add the post to the user's items
+        UserItem::create([
+            'user_id' => auth()->user()->id,
+            'post_id' => $post->id,
+        ]);
+
         return response([
-            'message' => 'Post created.',
+            'message' => 'Post created and added to user items.',
             'post' => $post,
-        ], 200);
+        ], 201);
     }
-    
 
     public function update(Request $request, $id)
-{
-    $post = Post::find($id);
+    {
+        $post = Post::find($id);
 
-    if (!$post) {
-        return response([
-            'message' => 'Post not found.'
-        ], 404);
-    }
-
-    if ($post->user_id != auth()->user()->id) {
-        return response([
-            'message' => 'Permission denied.'
-        ], 403);
-    }
-
-    // Validate fields
-    $attrs = $request->validate([
-        'body' => 'required|string',
-        'price' => 'nullable|numeric|min:0', // Price is optional during update
-        'images' => 'nullable|array', // Accepts an array of files
-        'images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048' // File validation rules
-    ]);
-
-    // Handle images
-    $images = $post->images; // Preserve existing images
-    if ($request->hasFile('images')) {
-        foreach ($request->file('images') as $image) {
-            $path = $image->store('posts', 'public'); // Save the file to the 'posts' directory
-            $images[] = $path;
+        if (!$post) {
+            return response([
+                'message' => 'Post not found.'
+            ], 404);
         }
+
+        if ($post->user_id != auth()->user()->id) {
+            return response([
+                'message' => 'Permission denied.'
+            ], 403);
+        }
+
+        // Validate fields
+        $attrs = $request->validate([
+            'body' => 'required|string',
+            'price' => 'nullable|numeric|min:0', // Price is optional during update
+            'images' => 'nullable|array', // Accepts an array of files
+            'images.*' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:2048' // File validation rules
+        ]);
+
+        // Handle images
+        $images = $post->images; // Preserve existing images
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('posts', 'public'); // Save the file to the 'posts' directory
+                $images[] = $path;
+            }
+        }
+
+        // Update post attributes
+        $post->update([
+            'body' => $attrs['body'],
+            'price' => $attrs['price'] ?? $post->price, // Preserve existing price if not provided
+            'images' => $images // Update images
+        ]);
+
+        return response([
+            'message' => 'Post updated.',
+            'post' => $post
+        ], 200);
     }
 
-    // Update post attributes
-    $post->update([
-        'body' => $attrs['body'],
-        'price' => $attrs['price'] ?? $post->price, // Preserve existing price if not provided
-        'images' => $images // Update images
-    ]);
+    public function search(Request $request)
+    {
+        $query = $request->input('query');
+        $posts = Post::where('body', 'LIKE', "%{$query}%")
+                     ->get();
 
-    return response([
-        'message' => 'Post updated.',
-        'post' => $post
-    ], 200);
-}
-
-public function search(Request $request)
-{
-    $query = $request->input('query');
-    $posts = Post::where('body', 'LIKE', "%{$query}%")
-                 
-                 ->get();
-
-    return response()->json($posts);
-}
-
+        return response()->json($posts);
+    }
 
     // Delete a post
     public function destroy($id)

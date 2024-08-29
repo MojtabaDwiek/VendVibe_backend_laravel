@@ -6,6 +6,8 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\FavoritesController;
+use App\Http\Controllers\UserItemsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +34,16 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::get('/user', [AuthController::class, 'user']);
     Route::put('/user', [AuthController::class, 'update']);
     Route::post('/logout', [AuthController::class, 'logout']);
+    
+    // fav
+Route::post('/posts/{postId}/favorites', [FavoritesController::class, 'store']);
+Route::delete('/posts/{postId}/favorites', [FavoritesController::class, 'destroy']);
+Route::get('/user/favorites', [FavoritesController::class, 'index']);
+
+    //useritems
+    Route::post('user/user-items', [UserItemsController::class, 'store']);
+    Route::delete('user/user-items/{postId}', [UserItemsController::class, 'destroy']);
+    Route::get('user/user-items', [UserItemsController::class, 'index']);
 
     // Post
     Route::get('/posts', [PostController::class, 'index']); // all posts
