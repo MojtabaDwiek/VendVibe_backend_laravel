@@ -36,7 +36,7 @@ Route::group(['middleware' => ['auth:sanctum']], function() {
     Route::post('/logout', [AuthController::class, 'logout']);
     
     // fav
-Route::post('/posts/{postId}/favorites', [FavoritesController::class, 'store']);
+Route::post('/posts/favorites', [FavoritesController::class, 'store']);
 Route::delete('/posts/{postId}/favorites', [FavoritesController::class, 'destroy']);
 Route::get('/user/favorites', [FavoritesController::class, 'index']);
 
