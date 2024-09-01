@@ -32,7 +32,7 @@ class FavoritesController extends Controller
         ]);
 
         // Fetch the post details
-        $post = Post::find($postId);
+        $post = Post::with('user')->find($postId); // Include user details
 
         return response()->json([
             'message' => 'Post added to favorites',
@@ -60,8 +60,10 @@ class FavoritesController extends Controller
     // Retrieve all favorite posts for the authenticated user
     public function index()
     {
-        // Fetch favorites with related post data
-        $favorites = Favorite::where('user_id', Auth::id())->with('post')->get();
+        // Fetch favorites with related post and user data
+        $favorites = Favorite::where('user_id', Auth::id())
+            ->with(['post.user']) // Ensure post and user details are included
+            ->get();
 
         return response()->json($favorites);
     }
