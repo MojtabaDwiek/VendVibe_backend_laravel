@@ -25,7 +25,8 @@ Route::get('/test', function () {
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
-Route::post('/search', [PostController::class, 'search']);
+Route::post('/posts/search', [PostController::class, 'search']);
+
 
 // Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function() {

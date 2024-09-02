@@ -130,13 +130,29 @@ class PostController extends Controller
 
     public function search(Request $request)
     {
-        $query = $request->input('query');
+        $query = $request->input('query', '');
+
+        // Fetch posts with user information
         $posts = Post::where('body', 'LIKE', "%{$query}%")
-                     ->get();
+                     ->with('user:id,phone_number,image') // Include user info (phone_number, image)
+                     ->get()
+                     ->map(function ($post) {
+                         // Format the response
+                         return [
+                             'id' => $post->id,
+                             'body' => $post->body,
+                             'price' => $post->price,
+                             'images' => $post->images, // Ensure images are accessible
+                             'user' => [
+                                 'phone_number' => $post->user->phone_number,
+                                 'image' => $post->user->image,
+                             ],
+                         ];
+                     });
 
-        return response()->json($posts);
+        return response()->json(['posts' => $posts]);
     }
-
+    
     // Delete a post
     public function destroy($id)
     {
