@@ -8,7 +8,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\FavoritesController;
 use App\Http\Controllers\UserItemsController;
-
+use App\Http\Controllers\PasswordResetController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -26,7 +26,7 @@ Route::get('/test', function () {
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/posts/search', [PostController::class, 'search']);
-
+Route::post('/password-reset', [PasswordResetController::class, 'reset']);
 
 // Protected Routes
 Route::group(['middleware' => ['auth:sanctum']], function() {
