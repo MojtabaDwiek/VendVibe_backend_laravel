@@ -6,13 +6,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class AuthController extends Controller
 {
     // Register user
     public function register(Request $request)
     {
-        // Validate fields
         $attrs = $request->validate([
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
@@ -20,7 +20,6 @@ class AuthController extends Controller
             'phone_number' => 'required|string|max:8',
         ]);
 
-        // Create user
         $user = User::create([
             'name' => $attrs['name'],
             'email' => $attrs['email'],
@@ -28,7 +27,6 @@ class AuthController extends Controller
             'phone_number' => $attrs['phone_number'],
         ]);
 
-        // Return user & token in response
         return response([
             'user' => $user,
             'phone_number' => $user->phone_number,
@@ -39,13 +37,11 @@ class AuthController extends Controller
     // Login user
     public function login(Request $request)
     {
-        // Validate fields
         $attrs = $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:6'
         ]);
 
-        // Attempt login
         if (!Auth::attempt($attrs)) {
             return response([
                 'message' => 'Invalid credentials.'
@@ -54,7 +50,6 @@ class AuthController extends Controller
 
         $user = auth()->user();
 
-        // Return user & token in response
         return response([
             'user' => $user,
             'phone_number' => $user->phone_number,
@@ -86,15 +81,17 @@ class AuthController extends Controller
     public function update(Request $request)
     {
         $attrs = $request->validate([
-            'name' => 'required|string'
+            'name' => 'required|string',
+            'phone_number' => 'nullable|string|max:8',
         ]);
 
         $image = $request->hasFile('image') 
-            ? $this->saveImage($request->file('image'), 'profiles') 
+            ? $this->saveImage($request->file('image'), 'public/profiles') 
             : null;
 
         auth()->user()->update([
             'name' => $attrs['name'],
+            'phone_number' => $attrs['phone_number'] ?? auth()->user()->phone_number,
             'image' => $image
         ]);
 
@@ -104,6 +101,4 @@ class AuthController extends Controller
             'phone_number' => auth()->user()->phone_number
         ], 200);
     }
-
-   
 }
