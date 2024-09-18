@@ -17,7 +17,7 @@ class AuthController extends Controller
             'name' => 'required|string',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
-            'phone_number' => 'required|string|max:8',
+            'phone_number' => 'required|digits:8',
         ]);
 
         $user = User::create([
@@ -82,7 +82,7 @@ class AuthController extends Controller
     {
         $attrs = $request->validate([
             'name' => 'required|string',
-            'phone_number' => 'nullable|string|max:8',
+            'phone_number' => 'nullable|digits:8',
         ]);
 
         $image = $request->hasFile('image') 
