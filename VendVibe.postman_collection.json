@@ -1,0 +1,563 @@
+{
+	"info": {
+		"_postman_id": "78cde988-c28b-4543-a8c2-dc66d0b4806f",
+		"name": "VendVibe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36956390"
+	},
+	"item": [
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"hasan\",\r\n    \"email\": \"mojtaba@example.com\",\r\n    \"password\": \"password\",\r\n    \"password_confirmation\": \"password\",\r\n    \"phone_number\": \"81420536\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/register",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"mojtaba@example.com\",\r\n    \"password\": \"password\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/login",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "logout",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer 07GTr9rzfvAaj9N1HL5UFxWRCL1cXYnALEA7e6y738804bc1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/logout",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "userdetails",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer ZEk1dF47oqvbX2admDaydzzdUnaXSrR1NIdbP5Lh862545e5",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/user",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update user",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer N2cIpnSozvldAe0b6KncGa5nlHgIEsTe0CYdK9c8dad400cc",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"Jane Doe\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8000/api/user",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer cbkY1dtMWRFvttwmFOjhkMVaE7jGJ8EMmnbLLXeO4d5734b2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "body",
+							"value": "villa",
+							"type": "text"
+						},
+						{
+							"key": "price",
+							"value": "200",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/posts",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "myitems",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer LjxvB0bcahg0gO8vJZTxGfPQkywY8KfsDRNcI55dec2de0bf",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/user/user-items/1",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"user-items",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer cbkY1dtMWRFvttwmFOjhkMVaE7jGJ8EMmnbLLXeO4d5734b2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/search?query=laptop",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"search"
+					],
+					"query": [
+						{
+							"key": "query",
+							"value": "laptop"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add fav",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer cbkY1dtMWRFvttwmFOjhkMVaE7jGJ8EMmnbLLXeO4d5734b2",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/posts/5/favorites",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts",
+						"5",
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view fav",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer LjxvB0bcahg0gO8vJZTxGfPQkywY8KfsDRNcI55dec2de0bf",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/user/favorites",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"favorites"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view Myitems",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer cbkY1dtMWRFvttwmFOjhkMVaE7jGJ8EMmnbLLXeO4d5734b2",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/user/user-items",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"user",
+						"user-items"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all posts",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "Bearer cbkY1dtMWRFvttwmFOjhkMVaE7jGJ8EMmnbLLXeO4d5734b2",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/posts",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "password reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"john@example.com\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/password-reset",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"password-reset"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add comment",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer AFseMHSO9owjTZpMRgucjKZn6NFX3PYX0T2B3Y5De4eb79b1",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": \"This is a comment.\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/posts/3/comments",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts",
+						"3",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "view comments",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer AFseMHSO9owjTZpMRgucjKZn6NFX3PYX0T2B3Y5De4eb79b1",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://192.168.0.113:8000/api/posts/4/comments",
+					"protocol": "http",
+					"host": [
+						"192",
+						"168",
+						"0",
+						"113"
+					],
+					"port": "8000",
+					"path": [
+						"api",
+						"posts",
+						"4",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
